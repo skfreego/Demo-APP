@@ -129,8 +129,9 @@ def process_csv_files(input_folder, previous_data=None):
                                  if sensor_id not in ['', '00']]
             })
 
-        # Modify the summary statistics DataFrame to display average interval with 2 decimal places
-        summary_stats_df['Average Interval'] = summary_stats_df['Average Interval'].apply(lambda x: round(x, 2))
+        # Format the average interval values as strings with 2 decimal places
+        summary_stats_df['Average Interval'] = summary_stats_df['Average Interval'].apply(lambda x: "{:.2f}".format(x))
+
 
         # Display as table
         st.write(count_sensors_df)
