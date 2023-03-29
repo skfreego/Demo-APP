@@ -128,6 +128,8 @@ def process_csv_files(input_folder, previous_data=None):
                                  for sensor_id in sorted(sensor_min_times.keys())
                                  if sensor_id not in ['', '00']]
             })
+        # Modify the summary statistics DataFrame to display average interval with 2 decimal places
+        summary_stats_df['Average Interval'] = summary_stats_df['Average Interval'].apply(lambda x: round(x, 2))
 
         # Display as table
         st.write(count_sensors_df)
