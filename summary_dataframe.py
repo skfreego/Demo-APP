@@ -7,6 +7,7 @@ import streamlit as st
 
 
 def process_csv_files(input_folder, previous_data=None):
+    st.title('Sensor Data Dashboard\n')
     # Initialize the total row count, sensor count, and dictionaries to store sensor time intervals
     total_rows = 0
     sensor_counts = {}
@@ -83,8 +84,6 @@ def process_csv_files(input_folder, previous_data=None):
             processed_files.append(csv_file)
 
         # Construct a pandas dataframe from the collected data
-        st.title('Real-time Output\n')
-        st.header('Sensor Data Dashboard\n')
         data = {
             'Sensor ID': [':'.join([s_id.upper().zfill(2) for s_id in sensor_id.split(':')])
                           for sensor_id in sensor_avg_times.keys() if sensor_id != '' and sensor_id != '00'],
