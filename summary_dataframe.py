@@ -7,7 +7,6 @@ import streamlit as st
 
 
 def process_csv_files(input_folder, previous_data=None):
-    st.title('Sensor Data Dashboard\n')
     # Initialize the total row count, sensor count, and dictionaries to store sensor time intervals
     total_rows = 0
     sensor_counts = {}
@@ -140,4 +139,15 @@ def process_csv_files(input_folder, previous_data=None):
 # Wait for 5 seconds before checking for new files again
 time.sleep(5)
 
-process_csv_files('.')
+def streamlit_app():
+    st.title('Sensor Data Dashboard')
+    st.write('')
+    output_text = st.empty()
+    while True:
+        output_text.text(process_csv_files('.'))
+        time.sleep(5)
+
+
+# Run the Streamlit app
+streamlit_app()
+
