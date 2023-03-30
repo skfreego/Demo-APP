@@ -10,3 +10,4 @@ The script uses several built-in functions and libraries, including os for file 
 Overall, the script is well-organized and easy to understand. However, it could benefit from additional error handling to handle cases where files are locked or cannot be read due to file permissions, and it could also benefit from more descriptive error messages.
 
 # Sensor Data Dashboard
+### cloud link:-https://skfreego-demo-app-summary-dataframe-3yhusz.streamlit.app/
