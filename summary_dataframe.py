@@ -6,7 +6,7 @@ import pandas as pd
 import streamlit as st
 
 
-def process_csv_files(input_folder, previous_data=None):
+def process_csv_files(input_folder):
     # Initialize the total row count, sensor count, and dictionaries to store sensor time intervals
     total_rows = 0
     sensor_counts = {}
@@ -17,16 +17,6 @@ def process_csv_files(input_folder, previous_data=None):
     # Initialize a list to store the file names that have already been processed
     processed_files = []
 
-    if previous_data is not None:
-        # Initialize the dictionaries with the previous data
-        sensor_counts = previous_data['sensor_counts']
-        sensor_avg_times = previous_data['sensor_avg_times']
-        sensor_max_times = previous_data['sensor_max_times']
-        sensor_min_times = previous_data['sensor_min_times']
-        total_rows = previous_data['total_rows']
-        unique_sensor_ids = previous_data['unique_sensor_ids']
-        processed_files = previous_data['processed_files']
-
     while True:
         # Get a list of CSV files in the input folder that have not been processed before
         csv_files = [filename for filename in os.listdir(input_folder) if filename.endswith('.csv')
@@ -34,7 +24,7 @@ def process_csv_files(input_folder, previous_data=None):
 
         if not csv_files:
             print('There are no CSV files in the input folder.')
-            time.sleep(5)
+            time.sleep(15)
             continue
 
         # Process each CSV file
@@ -79,14 +69,14 @@ def process_csv_files(input_folder, previous_data=None):
                         sensor_max_times[sensor_id] = time_interval
                         sensor_min_times[sensor_id] = time_interval
 
-            # Add the processed file name to the list
+        # Add the processed file name to the list
             processed_files.append(csv_file)
 
         # Construct a pandas dataframe from the collected data
         data = {
             'Sensor ID': [':'.join([s_id.upper().zfill(2) for s_id in sensor_id.split(':')])
                           for sensor_id in sensor_avg_times.keys() if sensor_id != '' and sensor_id != '00'],
-            'Count': [sensor_counts[sensor_id] for sensor_id in sensor_avg_times.keys()
+            'Count': [sensor_counts[sensor_id] for sensor_id in sensor_counts.keys()
                       if sensor_id != '' and sensor_id != '00'],
             'Average Interval': [round(statistics.mean(sensor_avg_times[sensor_id]), 2)
                                  for sensor_id in sensor_avg_times.keys()
@@ -97,28 +87,34 @@ def process_csv_files(input_folder, previous_data=None):
                                  for sensor_id in sensor_min_times.keys()
                                  if sensor_id != '' and sensor_id != '00']
         }
+
         df = pd.DataFrame(data)
 
-        # Sort the dataframe by sensor ID
-        df.sort_values(by=['Sensor ID'], inplace=True)
+
+
         st.write('Total records:', total_rows, '\n')
         st.write('Unique Sensor IDs:', len(unique_sensor_ids), '\n')
 
+
+
         # Print the sensor ID and count
+        st.write('Sensor ID  and Count')
         count_sensors_df = pd.DataFrame({
             'Sensor ID': [':'.join([s_id.upper().zfill(2) for s_id in sensor_id.split(':')]) for sensor_id in
                           sorted(sensor_avg_times.keys()) if sensor_id not in ['', '00']],
-            'Count': [sensor_counts[sensor_id] for sensor_id in sensor_avg_times.keys()
+            'Count': [sensor_counts[sensor_id] for sensor_id in sorted(sensor_counts.keys())
                       if sensor_id != '' and sensor_id != '00']
             })
+        # Display as table
+        st.write(count_sensors_df)
 
         # Print the Summary statistics
+        st.write('Summary Statistics')
         summary_stats_df = pd.DataFrame({
             'Sensor ID': [':'.join([s_id.upper().zfill(2) for s_id in sensor_id.split(':')]) for sensor_id in
                           sorted(sensor_avg_times.keys()) if sensor_id not in ['', '00']],
-            'Average Interval': [round(statistics.mean(sensor_avg_times[sensor_id]), 2)
-                                 for sensor_id in sensor_avg_times.keys()
-                                 if sensor_id != '' and sensor_id != '00'],
+            'Average Interval': [statistics.mean(sensor_avg_times[sensor_id]) for sensor_id in
+                                 sorted(sensor_avg_times.keys()) if sensor_id not in ['', '00']],
             'Maximum Interval': [int(round(sensor_max_times[sensor_id]))
                                  for sensor_id in sorted(sensor_max_times.keys())
                                  if sensor_id not in ['', '00']],
@@ -131,13 +127,12 @@ def process_csv_files(input_folder, previous_data=None):
         summary_stats_df['Average Interval'] = summary_stats_df['Average Interval'].apply(lambda x: "{:.2f}".format(x))
 
 
-        # Display as table
-        st.write(count_sensors_df)
         st.write(summary_stats_df)
 
 
 # Wait for 5 seconds before checking for new files again
 time.sleep(5)
+
 
 def streamlit_app():
     st.title('Sensor Data Dashboard')
@@ -150,4 +145,3 @@ def streamlit_app():
 
 # Run the Streamlit app
 streamlit_app()
-
