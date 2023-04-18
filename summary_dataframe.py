@@ -89,7 +89,7 @@ def run_app():
                 unique_sensor_ids = unique_sensor_ids[unique_sensor_ids.str.contains(':')].value_counts()
                 unique_sensor_ids = unique_sensor_ids[(unique_sensor_ids != 1)]
                 containers['Unique Mac IDS'][1].write(
-                    f"Total number of unique Mac IDs (excluding those with count of 1 and 2): {len(unique_sensor_ids)}")
+                    f"Total number of unique Mac IDs: {len(unique_sensor_ids)}")
 
                 # Display unique Sensor IDs and their counts
                 sensor_counts = all_data['mac_id'].str.upper().value_counts()
